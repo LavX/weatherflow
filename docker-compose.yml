@@ -1,0 +1,11 @@
+version: '3'
+services:
+  weather_reporter:
+    build: .
+    environment:
+      - WU_PWS_ID=your_pws_id_here
+      - WU_API_KEY=your_weather_underground_api_key_here
+      - WINDY_API_KEY=your_windy_api_key_here
+      - WINDY_STATION_ID=0
+      - UPDATE_INTERVAL=300
+    restart: always
