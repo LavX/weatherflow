@@ -1,4 +1,4 @@
-# 🌦️ Weather Flow: Seamlessly Report Your Peather Underground PWS Data to Windy 🌍
+# 🌦️ Weather Flow: Seamlessly Report Your Weather Underground PWS Data to Windy 🌍
 
 [![GitHub issues](https://img.shields.io/github/issues/LavX/weatherflow)](https://github.com/LavX/weatherflow/issues)
 [![GitHub stars](https://img.shields.io/github/stars/LavX/weatherflow)](https://github.com/LavX/weatherflow/stargazers)
