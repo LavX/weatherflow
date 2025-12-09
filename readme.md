@@ -1,27 +1,50 @@
-# 🌦️ Weather Flow: Seamlessly Report Your Weather Underground PWS Data to Windy 🌍
+# 🌦️ WeatherFlow: Multi-Platform Weather Data Forwarding
 
 [![GitHub issues](https://img.shields.io/github/issues/LavX/weatherflow)](https://github.com/LavX/weatherflow/issues)
 [![GitHub stars](https://img.shields.io/github/stars/LavX/weatherflow)](https://github.com/LavX/weatherflow/stargazers)
 [![GitHub license](https://img.shields.io/github/license/LavX/weatherflow)](https://github.com/LavX/weatherflow/blob/main/LICENSE)
 [![GitHub forks](https://img.shields.io/github/forks/LavX/weatherflow)](https://github.com/LavX/weatherflow/network)
+[![Python 3.14+](https://img.shields.io/badge/python-3.14+-blue.svg)](https://www.python.org/downloads/)
 
 ---
 
 ## 🌟 Overview
 
-**Weather Flow** is a modern, Dockerized Python solution that effortlessly transfers your Personal Weather Station (PWS) data from Weather Underground to Windy and idokep.hu. Leverage the power of APIs and cloud computing to ensure your weather station's data is accurately reflected on multiple platforms, where it can contribute to global and regional weather monitoring.
+**WeatherFlow** is a modern, Dockerized Python solution that effortlessly transfers your Personal Weather Station (PWS) data from Weather Underground to multiple platforms including Windy and idokep.hu. Leverage the power of APIs and cloud computing to ensure your weather station's data is accurately reflected on multiple platforms, where it can contribute to global and regional weather monitoring.
 
-This project is built with scalability and flexibility in mind, allowing you to configure update intervals and station-specific details with ease. Whether you're a tech enthusiast, a data geek, or a professional meteorologist, Weather Flow is your go-to solution for seamless weather data integration.
+This project is built with scalability and flexibility in mind, allowing you to configure update intervals and station-specific details with ease. Whether you're a tech enthusiast, a data geek, or a professional meteorologist, WeatherFlow is your go-to solution for seamless weather data integration.
 
 ---
 
 ## 🚀 Features
 
-- **Dockerized for Simplicity**: Run your script in a containerized environment for consistent performance across platforms.
-- **Multi-Platform Support**: Send data to both Windy and idokep.hu simultaneously.
-- **Configurable Update Intervals**: Set your own data update frequency via environment variables. (Windy restriction is 5 or more minutes!)
-- **Robust Error Handling**: Logs and retries failed requests to maintain data integrity.
-- **Scalable**: Easily deploy multiple instances if managing data for more than one PWS.
+- **Dockerized for Simplicity**: Run in a containerized environment for consistent performance across platforms
+- **Multi-Platform Support**: Send data to both Windy and idokep.hu simultaneously
+- **Modular Architecture**: Clean, maintainable codebase with separate modules for each provider
+- **Configurable Update Intervals**: Set your own data update frequency (Windy minimum: 5 minutes)
+- **Robust Error Handling**: Comprehensive logging and error handling for reliability
+- **Scalable**: Easily deploy multiple instances for managing multiple PWS stations
+
+---
+
+## 📁 Project Structure
+
+```
+weatherflow/
+├── src/
+│   ├── __init__.py
+│   ├── config.py              # Configuration management
+│   ├── main.py                # Application entry point
+│   └── providers/
+│       ├── __init__.py
+│       ├── weather_underground.py  # WU data fetcher
+│       ├── windy.py               # Windy publisher
+│       └── idokep.py              # Idokep.hu publisher
+├── docker-compose.yml
+├── Dockerfile
+├── requirements.txt
+└── readme.md
+```
 
 ---
 
@@ -29,7 +52,6 @@ This project is built with scalability and flexibility in mind, allowing you to 
 
 ### Prerequisites
 
-Ensure you have the following installed:
 - [Docker](https://www.docker.com/get-started)
 - [Docker Compose](https://docs.docker.com/compose/install/)
 
@@ -43,19 +65,26 @@ Ensure you have the following installed:
 
 2. **Configure Environment Variables**:
     Update the `docker-compose.yml` with your own values:
-    ```env
-    WU_PWS_ID=your_pws_id_here
-    WU_API_KEY=your_weather_underground_api_key_here
-    WINDY_API_KEY=your_windy_api_key_here
-    WINDY_STATION_ID=0
-    UPDATE_INTERVAL=300
-    # Idokep.hu settings (optional)
-    IDOKEP_ENABLED=true
-    IDOKEP_USER=your_idokep_username
-    IDOKEP_PASS=your_idokep_password
-    IDOKEP_STATION_TYPE=PWS
-    IDOKEP_PRO=false
-    IDOKEP_UTC=1
+    ```yaml
+    environment:
+      # Required - Weather Underground
+      - WU_PWS_ID=your_pws_id_here
+      - WU_API_KEY=your_weather_underground_api_key_here
+      
+      # Required - Windy
+      - WINDY_API_KEY=your_windy_api_key_here
+      - WINDY_STATION_ID=0
+      
+      # General settings
+      - UPDATE_INTERVAL=300
+      
+      # Optional - Idokep.hu
+      - IDOKEP_ENABLED=false
+      - IDOKEP_USER=your_idokep_username
+      - IDOKEP_PASS=your_idokep_password
+      - IDOKEP_STATION_TYPE=PWS
+      - IDOKEP_PRO=false
+      - IDOKEP_UTC=1
     ```
 
 3. **Build and Run**:
@@ -64,98 +93,133 @@ Ensure you have the following installed:
     ```
 
 4. **Check Logs**:
-    Monitor the service to ensure data is being sent correctly:
     ```bash
     docker-compose logs -f
     ```
 
 ---
 
-## 🌍 Usage
+## ⚙️ Configuration Reference
 
-Weather Flow is designed to run in the background, continuously syncing data from your PWS to Windy and idokep.hu. Customize the update frequency, and add additional PWS stations as needed by tweaking the environment variables.
+### Required Variables
 
-### Example: Using VEVOR 7-in-1 Wi-Fi Weather Station
-- **Weather Underground**: [PWS Dashboard](https://www.wunderground.com/dashboard/pws/ITAKSO6)
-- **Windy**: [PWS on Windy](https://www.windy.com/station/pws-f0b1fce0?46.475,19.068,8)
+| Variable | Description |
+|----------|-------------|
+| `WU_PWS_ID` | Your Weather Underground PWS station ID |
+| `WU_API_KEY` | Your Weather Underground API key |
+| `WINDY_API_KEY` | Your Windy API key |
+| `WINDY_STATION_ID` | Your Windy station ID (default: `0`) |
+
+### General Settings
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `UPDATE_INTERVAL` | Update interval in seconds | `300` (5 minutes) |
+
+### Idokep.hu Settings (Optional)
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `IDOKEP_ENABLED` | Enable idokep.hu integration | `false` |
+| `IDOKEP_USER` | Your idokep.hu username | - |
+| `IDOKEP_PASS` | Your idokep.hu password | - |
+| `IDOKEP_STATION_TYPE` | Station type (e.g., `PWS`, `WS2305`, `Netatmo`) | `PWS` |
+| `IDOKEP_PRO` | Use pro.idokep.hu for data archiving | `false` |
+| `IDOKEP_UTC` | Time format: `1` = UTC, `0` = Central European | `1` |
 
 ---
 
 ## 🇭🇺 Idokep.hu Integration
 
-Weather Flow now supports sending weather data to [idokep.hu](https://www.idokep.hu/), a popular Hungarian weather service. This feature is optional and can be enabled via environment variables.
+WeatherFlow supports sending weather data to [idokep.hu](https://www.idokep.hu/), a popular Hungarian weather service.
 
-### Prerequisites for Idokep.hu
+### Prerequisites
 
-1. Register an account at [idokep.hu](https://www.idokep.hu/regisztracio) (basic registration is sufficient for data upload)
-2. For data archiving, register at [pro.idokep.hu](https://pro.idokep.hu/) (in this case, the API endpoint changes to `pro.idokep.hu`)
-
-### Idokep.hu Configuration
-
-| Variable | Description | Required | Default |
-|----------|-------------|----------|---------|
-| `IDOKEP_ENABLED` | Set to `true` to enable idokep.hu integration | Yes | `false` |
-| `IDOKEP_USER` | Your idokep.hu username | Yes (if enabled) | - |
-| `IDOKEP_PASS` | Your idokep.hu password | Yes (if enabled) | - |
-| `IDOKEP_STATION_TYPE` | The type of your weather station (e.g., `PWS`, `WS2305`, `Netatmo`) | No | `PWS` |
-| `IDOKEP_PRO` | Set to `true` to use pro.idokep.hu (for data archiving) | No | `false` |
-| `IDOKEP_UTC` | Time format: `1` = UTC, `0` = Central European local time | No | `1` |
-
-### Update Frequency
-
-Data is sent to idokep.hu at the same interval as Windy, controlled by the `UPDATE_INTERVAL` environment variable (default: 300 seconds = 5 minutes). Both services receive data simultaneously in each update cycle.
+1. Register at [idokep.hu](https://www.idokep.hu/regisztracio) (basic registration is sufficient)
+2. For data archiving, register at [pro.idokep.hu](https://pro.idokep.hu/)
 
 ### Data Mapping
 
-The following data is sent to idokep.hu:
-
-| Idokep.hu Parameter | Description | Source |
-|---------------------|-------------|--------|
-| `hom` | Temperature (°C) | Weather Underground temp |
-| `rh` | Relative humidity (%) | Weather Underground humidity |
-| `szelirany` | Wind direction (degrees) | Weather Underground winddir |
-| `szelero` | Wind speed (m/s) | Weather Underground windSpeed |
-| `szellokes` | Wind gust (m/s) | Weather Underground windGust |
-| `p` | Sea-level pressure (hPa) | Weather Underground pressure |
-| `uv` | UV index | Weather Underground UV |
-| `csap1h` | 1-hour precipitation (mm) | Weather Underground precipRate |
+| Parameter | Description | Unit |
+|-----------|-------------|------|
+| `hom` | Temperature | °C |
+| `rh` | Relative humidity | % |
+| `szelirany` | Wind direction | degrees |
+| `szelero` | Wind speed | m/s |
+| `szellokes` | Wind gust | m/s |
+| `p` | Sea-level pressure | hPa |
+| `uv` | UV index | - |
+| `csap1h` | 1-hour precipitation | mm |
 
 ### Notes
 
-- **Temperature 0°C**: Idokep.hu API doesn't accept exactly 0.0°C. If the temperature is 0.0°C, it will be automatically reported as 0.1°C.
-- **Time Format**: By default, data is sent with UTC timestamps (`IDOKEP_UTC=1`). If your server is already in UTC and you prefer to send local Central European time, set `IDOKEP_UTC=0`.
-- **Pro vs Regular**: Use `IDOKEP_PRO=true` if you have a pro.idokep.hu account and want data archiving. Otherwise, leave it as `false` to use the standard automata.idokep.hu endpoint.
+- **Temperature 0°C**: Automatically reported as 0.1°C (idokep.hu API limitation)
+- **Time Format**: Default is UTC (`IDOKEP_UTC=1`). Set to `0` for Central European local time
+- **Pro vs Regular**: Use `IDOKEP_PRO=true` for pro.idokep.hu with data archiving
 
-### Example Commands
+---
 
-- **Rebuild and Restart**:
-    ```bash
-    docker-compose up -d --build
-    ```
-- **Stop the Service**:
-    ```bash
-    docker-compose down
-    ```
+## 🌍 Example Usage
+
+### VEVOR 7-in-1 Wi-Fi Weather Station
+- **Weather Underground**: [PWS Dashboard](https://www.wunderground.com/dashboard/pws/ITAKSO6)
+- **Windy**: [PWS on Windy](https://www.windy.com/station/pws-f0b1fce0?46.475,19.068,8)
+
+### Docker Commands
+
+```bash
+# Build and start
+docker-compose up -d --build
+
+# View logs
+docker-compose logs -f
+
+# Stop service
+docker-compose down
+
+# Restart service
+docker-compose restart
+```
+
+---
+
+## 🔧 Development
+
+### Running Locally (without Docker)
+
+```bash
+# Install dependencies
+pip install -r requirements.txt
+
+# Set environment variables
+export WU_PWS_ID=your_pws_id
+export WU_API_KEY=your_api_key
+export WINDY_API_KEY=your_windy_key
+# ... other variables
+
+# Run
+python -m src.main
+```
+
+### Requirements
+
+- Python 3.14+
+- requests >= 2.32.5
 
 ---
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](https://github.com/LavX/weatherflow/blob/main/LICENSE) file for details.
+Licensed under the MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
 ## 📫 Contact
 
-Have questions? Feel free to [open an issue](https://github.com/LavX/weatherflow/issues) or reach out directly via GitHub.
+Questions? [Open an issue](https://github.com/LavX/weatherflow/issues) or reach out via GitHub.
 
 ---
 
-**Weather Flow** is part of the modern tech stack for weather enthusiasts, delivering precise and reliable weather data to Windy. Join the movement, and let's make the weather world a bit more accurate! ☁️🌧️🌤️
+**WeatherFlow** - Delivering precise and reliable weather data across platforms ☁️🌧️🌤️
 
----
-
-This README was crafted with ❤️ by LavX.
-
----
-
+*Crafted with ❤️ by LavX*
