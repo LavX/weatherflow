@@ -1,5 +1,6 @@
 """Idokep.hu weather data publisher."""
 import logging
+import re
 from datetime import datetime, timezone
 from typing import Optional
 
@@ -77,16 +78,41 @@ class IdokepPublisher:
             response = requests.get(self.url, params=payload, timeout=30)
             
             if response.status_code == 200:
-                logger.info("Data successfully sent to Idokep.hu. Response: %s", response.text)
+                # Parse the HTML response to extract the status message
+                status_msg = self._parse_response(response.text)
+                logger.info("Data successfully sent to Idokep.hu: %s", status_msg)
                 return True
             
             logger.error(
-                "Failed to send data to Idokep.hu. Status: %d, Response: %s",
-                response.status_code,
-                response.text
+                "Failed to send data to Idokep.hu. Status: %d",
+                response.status_code
             )
             return False
             
         except requests.RequestException as e:
             logger.error("Error sending data to Idokep.hu: %s", e)
             return False
+    
+    def _parse_response(self, html: str) -> str:
+        """
+        Parse the idokep.hu HTML response to extract the status message.
+        
+        Args:
+            html: Raw HTML response from idokep.hu
+            
+        Returns:
+            Extracted status message or 'OK' if parsing fails
+        """
+        # Try to extract the location and status from the HTML
+        # Example: "Beírás ide:<br>Taksony...<br>kész!"
+        match = re.search(r"Be[íi]r[áa]s ide:<br>([^<]+)\.\.\.<br>([^<]+)", html)
+        if match:
+            location = match.group(1).strip()
+            status = match.group(2).strip()
+            return f"{location} - {status}"
+        
+        # Check if response contains "kész" (success indicator)
+        if "kész" in html.lower():
+            return "OK"
+        
+        return "OK"
