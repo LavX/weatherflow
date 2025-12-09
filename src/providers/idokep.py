@@ -51,6 +51,11 @@ class IdokepPublisher:
         if temp == 0.0:
             temp = 0.1
         
+        # Handle dewpoint - same 0.0 issue as temperature
+        dewpoint = data.dewpoint
+        if dewpoint == 0.0:
+            dewpoint = 0.1
+        
         payload = {
             "user": config.IDOKEP_USER,
             "pass": config.IDOKEP_PASS,
@@ -64,6 +69,7 @@ class IdokepPublisher:
             "tipus": config.IDOKEP_STATION_TYPE,
             "hom": temp,
             "rh": data.humidity,
+            "harmatpont": dewpoint,
             "szelirany": int(data.wind_dir),
             "szelero": round(data.wind_speed, 1),
             "szellokes": round(data.wind_gust, 1),
