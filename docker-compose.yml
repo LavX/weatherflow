@@ -8,4 +8,11 @@ services:
       - WINDY_API_KEY=your_windy_api_key_here
       - WINDY_STATION_ID=0
       - UPDATE_INTERVAL=300
+      # Idokep.hu settings (optional)
+      - IDOKEP_ENABLED=false
+      - IDOKEP_USER=your_idokep_username
+      - IDOKEP_PASS=your_idokep_password
+      - IDOKEP_STATION_TYPE=PWS
+      - IDOKEP_PRO=false
+      - IDOKEP_UTC=1
     restart: always
