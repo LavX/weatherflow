@@ -144,6 +144,7 @@ WeatherFlow supports sending weather data to [idokep.hu](https://www.idokep.hu/)
 |-----------|-------------|------|
 | `hom` | Temperature | °C |
 | `rh` | Relative humidity | % |
+| `harmatpont` | Dewpoint | °C |
 | `szelirany` | Wind direction | degrees |
 | `szelero` | Wind speed | m/s |
 | `szellokes` | Wind gust | m/s |
@@ -153,7 +154,7 @@ WeatherFlow supports sending weather data to [idokep.hu](https://www.idokep.hu/)
 
 ### Notes
 
-- **Temperature 0°C**: Automatically reported as 0.1°C (idokep.hu API limitation)
+- **Temperature/Dewpoint 0°C**: Automatically reported as 0.1°C (idokep.hu API limitation)
 - **Time Format**: Default is UTC (`IDOKEP_UTC=1`). Set to `0` for Central European local time
 - **Pro vs Regular**: Use `IDOKEP_PRO=true` for pro.idokep.hu with data archiving
 
