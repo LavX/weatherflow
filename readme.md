@@ -4,7 +4,7 @@
 [![GitHub stars](https://img.shields.io/github/stars/LavX/weatherflow)](https://github.com/LavX/weatherflow/stargazers)
 [![GitHub license](https://img.shields.io/github/license/LavX/weatherflow)](https://github.com/LavX/weatherflow/blob/main/LICENSE)
 [![GitHub forks](https://img.shields.io/github/forks/LavX/weatherflow)](https://github.com/LavX/weatherflow/network)
-[![Python 3.12+](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.14+](https://img.shields.io/badge/python-3.14+-blue.svg)](https://www.python.org/downloads/)
 
 ---
 
